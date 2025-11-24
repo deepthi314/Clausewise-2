@@ -1,0 +1,17 @@
+clausewise-frontend/node_modules/
+clausewise-frontend/dist/
+clausewise-frontend/.env
+clausewise-frontend/.env.*
+
+clausewise-backend/.venv/
+clausewise-backend/__pycache__/
+clausewise-backend/uploads/
+clausewise-backend/.env
+clausewise-backend/db.json
+
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
+npm-debug.log*
+yarn-error.log*
