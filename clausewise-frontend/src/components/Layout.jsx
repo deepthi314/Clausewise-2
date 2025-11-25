@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import {
     LayoutDashboard,
     FileText,
@@ -16,6 +17,7 @@ import { Button } from './ui/Button';
 
 const Layout = ({ children }) => {
     const { user, logout } = useAuth();
+    const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
@@ -26,8 +28,8 @@ const Layout = ({ children }) => {
     };
 
     const navItems = [
-        { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
-        { label: 'Chatbot', icon: MessageSquare, path: '/chatbot' },
+        { label: t('dashboard'), icon: LayoutDashboard, path: '/' },
+        { label: t('chatbot'), icon: MessageSquare, path: '/chatbot' },
     ];
 
     return (
@@ -74,7 +76,7 @@ const Layout = ({ children }) => {
                     </div>
                     <Button variant="ghost" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50" onClick={handleLogout}>
                         <LogOut className="mr-2 h-4 w-4" />
-                        Logout
+                        {t('logout')}
                     </Button>
                 </div>
             </aside>
@@ -116,7 +118,7 @@ const Layout = ({ children }) => {
                         })}
                         <Button variant="ghost" className="w-full justify-start text-red-600 mt-4" onClick={handleLogout}>
                             <LogOut className="mr-2 h-5 w-5" />
-                            Logout
+                            {t('logout')}
                         </Button>
                     </nav>
                 </div>

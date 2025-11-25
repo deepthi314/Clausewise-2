@@ -52,9 +52,11 @@ def overview(document_id: str, user=Depends(get_current_user)):
     return data
 
 @app.get("/analysis/{document_id}/extract")
-def extract(document_id: str, user=Depends(get_current_user)):
+def extract(document_id: str, lang: str = "en", user=Depends(get_current_user)):
     doc = get_document(user["id"], document_id)
     clauses = extract_clauses(doc["path"])
+    # Apply simplification to generate all modes
+    clauses = simplify_clauses(clauses, "Simplified", lang)
     return {"clauses": clauses}
 
 @app.post("/analysis/{document_id}/simplify")

@@ -6,22 +6,22 @@ def analyze_risk(path: str):
         "risks": [
             {
                 "category": "Indemnification",
-                "description": "The indemnification clause is one-sided, favoring the other party heavily.",
+                "description": "The indemnification clause is one-sided. Under Section 124 of the Indian Contract Act, 1872, indemnity should ideally be mutual to ensure fairness.",
                 "severity": "high"
             },
             {
                 "category": "Termination",
-                "description": "Termination notice period is shorter than standard market practice (15 days vs 30 days).",
+                "description": "Termination notice is 15 days. Standard practice in India for service agreements is often 30-90 days to allow for reasonable transition.",
                 "severity": "medium"
             },
             {
                 "category": "Liability Cap",
-                "description": "Liability is capped at a fixed amount rather than contract value.",
+                "description": "Liability is capped at a fixed amount. Section 73 of the Indian Contract Act allows for compensation for loss or damage, which might exceed this cap.",
                 "severity": "medium"
             },
             {
                 "category": "Jurisdiction",
-                "description": "Jurisdiction is set to a foreign court, which might increase dispute resolution costs.",
+                "description": "Jurisdiction is set to a foreign court. It is recommended to have jurisdiction in India (e.g., courts in New Delhi/Bangalore) for easier enforcement under the Code of Civil Procedure, 1908.",
                 "severity": "low"
             }
         ]

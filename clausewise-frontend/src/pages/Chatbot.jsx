@@ -1,14 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { Send, Bot, User } from 'lucide-react';
 import { cn } from '../lib/utils';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const Chatbot = () => {
+    const { t } = useTranslation();
     const [messages, setMessages] = useState([
-        { role: 'bot', content: 'Hello! I am ClauseWise AI. Ask me anything about legal concepts or your documents.' }
+        { role: 'bot', content: t('bot_welcome') }
     ]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -36,7 +39,7 @@ const Chatbot = () => {
             const botMessage = { role: 'bot', content: response.data.answer };
             setMessages(prev => [...prev, botMessage]);
         } catch (error) {
-            setMessages(prev => [...prev, { role: 'bot', content: 'Sorry, I encountered an error. Please try again.' }]);
+            setMessages(prev => [...prev, { role: 'bot', content: t('bot_error') }]);
         } finally {
             setLoading(false);
         }
@@ -44,9 +47,12 @@ const Chatbot = () => {
 
     return (
         <div className="h-[calc(100vh-8rem)] flex flex-col">
-            <div className="mb-4">
-                <h1 className="text-3xl font-bold text-slate-900">Legal Assistant</h1>
-                <p className="text-slate-500">Ask questions about laws and regulations.</p>
+            <div className="mb-4 flex justify-between items-center">
+                <div>
+                    <h1 className="text-3xl font-bold text-slate-900">{t('legal_assistant')}</h1>
+                    <p className="text-slate-500">{t('ask_questions')}</p>
+                </div>
+                <LanguageSwitcher />
             </div>
 
             <Card className="flex-1 flex flex-col overflow-hidden">
@@ -96,7 +102,7 @@ const Chatbot = () => {
                         <Input
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder="Type your question..."
+                            placeholder={t('type_question')}
                             disabled={loading}
                             className="flex-1"
                         />

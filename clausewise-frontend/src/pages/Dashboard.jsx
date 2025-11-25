@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import FileUpload from '../components/FileUpload';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card';
 import { FileText, Clock, ChevronRight, Search } from 'lucide-react';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -33,18 +36,21 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
-        <p className="text-slate-500 mt-2">Manage and analyze your legal documents.</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">{t('dashboard')}</h1>
+          <p className="text-slate-500 mt-2">Manage and analyze your legal documents.</p>
+        </div>
+        <LanguageSwitcher />
       </div>
 
       <div className="grid gap-8 md:grid-cols-3">
         {/* Upload Section */}
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Upload Document</CardTitle>
+            <CardTitle>{t('upload_document')}</CardTitle>
             <CardDescription>
-              Upload a new contract or legal document for analysis.
+              {t('upload_desc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -55,17 +61,17 @@ const Dashboard = () => {
         {/* Quick Stats or Info */}
         <Card className="bg-primary-900 text-white border-none">
           <CardHeader>
-            <CardTitle className="text-white">ClauseWise AI</CardTitle>
+            <CardTitle className="text-white">{t('clausewise_ai')}</CardTitle>
             <CardDescription className="text-primary-100">
-              Your intelligent legal assistant.
+              {t('ai_assistant')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-primary-100 mb-4">
-              Our AI analyzes your documents for risks, fairness, and key clauses in seconds.
+              {t('ai_desc')}
             </p>
             <div className="text-3xl font-bold">{documents.length}</div>
-            <div className="text-sm text-primary-200">Documents Analyzed</div>
+            <div className="text-sm text-primary-200">{t('docs_analyzed')}</div>
           </CardContent>
         </Card>
       </div>
@@ -73,12 +79,12 @@ const Dashboard = () => {
       {/* Documents List */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-900">Recent Documents</h2>
+          <h2 className="text-xl font-semibold text-slate-900">{t('recent_docs')}</h2>
           <div className="w-64">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
               <Input
-                placeholder="Search documents..."
+                placeholder={t('search_docs')}
                 className="pl-9"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -88,15 +94,15 @@ const Dashboard = () => {
         </div>
 
         {loading ? (
-          <div className="text-center py-12">Loading documents...</div>
+          <div className="text-center py-12">{t('loading_docs')}</div>
         ) : filteredDocuments.length === 0 ? (
           <Card className="border-dashed">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
               <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center mb-4">
                 <FileText className="h-6 w-6 text-slate-400" />
               </div>
-              <h3 className="text-lg font-medium text-slate-900">No documents found</h3>
-              <p className="text-slate-500 mt-1">Upload your first document to get started.</p>
+              <h3 className="text-lg font-medium text-slate-900">{t('no_docs')}</h3>
+              <p className="text-slate-500 mt-1">{t('upload_first')}</p>
             </CardContent>
           </Card>
         ) : (
@@ -123,7 +129,7 @@ const Dashboard = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center text-sm text-primary-600 font-medium">
-                      View Analysis <ChevronRight className="h-4 w-4 ml-1" />
+                      {t('view_analysis')} <ChevronRight className="h-4 w-4 ml-1" />
                     </div>
                   </CardContent>
                 </Card>

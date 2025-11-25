@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { FileText, ShieldAlert, Scale, FileSearch, CheckCircle, AlertTriangle } from 'lucide-react';
 import { cn } from '../lib/utils';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const Analysis = () => {
     const { id } = useParams();
+    const { t, i18n } = useTranslation();
     const [activeTab, setActiveTab] = useState('overview');
+    const [summaryMode, setSummaryMode] = useState('Simplified'); // Simplified, ELI5, Professional
     const [data, setData] = useState({
         overview: null,
         clauses: null,
@@ -25,7 +29,9 @@ const Analysis = () => {
     // Fetch data based on active tab
     useEffect(() => {
         const fetchData = async () => {
-            if (data[activeTab]) return; // Already fetched
+            // Force refetch if language changes, or if data is missing
+            // We can check if the current data matches the current language, but for simplicity
+            // we will just refetch if the tab is active.
 
             setLoading(prev => ({ ...prev, [activeTab]: true }));
             try {
@@ -38,7 +44,9 @@ const Analysis = () => {
                     default: return;
                 }
 
-                const response = await api.get(endpoint);
+                const response = await api.get(endpoint, {
+                    params: { lang: i18n.language }
+                });
                 setData(prev => ({ ...prev, [activeTab]: response.data }));
             } catch (error) {
                 console.error(`Failed to fetch ${activeTab}:`, error);
@@ -48,13 +56,13 @@ const Analysis = () => {
         };
 
         fetchData();
-    }, [activeTab, id]);
+    }, [activeTab, id, i18n.language]);
 
     const tabs = [
-        { id: 'overview', label: 'Overview', icon: FileSearch },
-        { id: 'clauses', label: 'Clauses', icon: FileText },
-        { id: 'risk', label: 'Risk Analysis', icon: ShieldAlert },
-        { id: 'fairness', label: 'Fairness Check', icon: Scale },
+        { id: 'overview', label: t('overview'), icon: FileSearch },
+        { id: 'clauses', label: t('clauses'), icon: FileText },
+        { id: 'risk', label: t('risk_analysis'), icon: ShieldAlert },
+        { id: 'fairness', label: t('fairness_check'), icon: Scale },
     ];
 
     const renderContent = () => {
@@ -77,7 +85,7 @@ const Analysis = () => {
                     <div className="space-y-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Document Summary</CardTitle>
+                                <CardTitle>{t('doc_summary')}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
@@ -88,7 +96,7 @@ const Analysis = () => {
                         <div className="grid gap-6 md:grid-cols-2">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Key Entities</CardTitle>
+                                    <CardTitle>{t('key_entities')}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <ul className="list-disc list-inside text-slate-700 space-y-1">
@@ -100,7 +108,7 @@ const Analysis = () => {
                             </Card>
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Dates & Deadlines</CardTitle>
+                                    <CardTitle>{t('dates_deadlines')}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <ul className="list-disc list-inside text-slate-700 space-y-1">
@@ -117,18 +125,31 @@ const Analysis = () => {
             case 'clauses':
                 return (
                     <div className="space-y-4">
+                        <div className="flex gap-2 mb-4">
+                            {['Simplified', 'ELI5', 'Professional'].map(mode => (
+                                <Button
+                                    key={mode}
+                                    variant={summaryMode === mode ? 'default' : 'outline'}
+                                    size="sm"
+                                    onClick={() => setSummaryMode(mode)}
+                                >
+                                    {t(mode.toLowerCase())}
+                                </Button>
+                            ))}
+                        </div>
                         {currentData.clauses?.map((clause, i) => (
                             <Card key={i}>
                                 <CardHeader className="pb-2">
                                     <CardTitle className="text-lg font-medium">{clause.title || `Clause ${i + 1}`}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-slate-700">{clause.text}</p>
-                                    {clause.simplified && (
-                                        <div className="mt-3 p-3 bg-primary-50 rounded-md text-sm text-primary-800">
-                                            <strong>Simplified:</strong> {clause.simplified}
-                                        </div>
-                                    )}
+                                    <p className="text-slate-700 mb-2">{clause.text}</p>
+                                    <div className="p-3 bg-primary-50 rounded-md text-sm text-primary-800">
+                                        <strong>{t(summaryMode.toLowerCase())}: </strong>
+                                        {summaryMode === 'Simplified' ? clause.simplified :
+                                            summaryMode === 'ELI5' ? clause.eli5 :
+                                                clause.professional}
+                                    </div>
                                 </CardContent>
                             </Card>
                         )) || <p>No clauses extracted.</p>}
@@ -142,19 +163,19 @@ const Analysis = () => {
                             <Card className="bg-red-50 border-red-100">
                                 <CardContent className="pt-6 text-center">
                                     <div className="text-3xl font-bold text-red-600">{currentData.high_risk_count || 0}</div>
-                                    <div className="text-sm text-red-800">High Risks</div>
+                                    <div className="text-sm text-red-800">{t('high_risks')}</div>
                                 </CardContent>
                             </Card>
                             <Card className="bg-yellow-50 border-yellow-100">
                                 <CardContent className="pt-6 text-center">
                                     <div className="text-3xl font-bold text-yellow-600">{currentData.medium_risk_count || 0}</div>
-                                    <div className="text-sm text-yellow-800">Medium Risks</div>
+                                    <div className="text-sm text-yellow-800">{t('medium_risks')}</div>
                                 </CardContent>
                             </Card>
                             <Card className="bg-green-50 border-green-100">
                                 <CardContent className="pt-6 text-center">
                                     <div className="text-3xl font-bold text-green-600">{currentData.low_risk_count || 0}</div>
-                                    <div className="text-sm text-green-800">Low Risks</div>
+                                    <div className="text-sm text-green-800">{t('low_risks')}</div>
                                 </CardContent>
                             </Card>
                         </div>
@@ -183,8 +204,8 @@ const Analysis = () => {
                     <div className="space-y-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Fairness Score</CardTitle>
-                                <CardDescription>Overall fairness assessment of the document.</CardDescription>
+                                <CardTitle>{t('fairness_score')}</CardTitle>
+                                <CardDescription>{t('fairness_desc')}</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex items-center gap-4">
@@ -193,7 +214,7 @@ const Analysis = () => {
                                     </div>
                                     <div>
                                         <h4 className="font-semibold text-lg">
-                                            {currentData.score >= 80 ? 'Fair & Balanced' : currentData.score >= 50 ? 'Moderate Bias' : 'Heavily Biased'}
+                                            {currentData.score >= 80 ? t('fair_balanced') : currentData.score >= 50 ? t('moderate_bias') : t('heavily_biased')}
                                         </h4>
                                         <p className="text-slate-500">{currentData.summary}</p>
                                     </div>
@@ -202,7 +223,7 @@ const Analysis = () => {
                         </Card>
 
                         <div className="space-y-4">
-                            <h3 className="text-lg font-semibold">Detailed Breakdown</h3>
+                            <h3 className="text-lg font-semibold">{t('detailed_breakdown')}</h3>
                             {currentData.breakdown?.map((item, i) => (
                                 <Card key={i}>
                                     <CardContent className="pt-6">
@@ -230,11 +251,12 @@ const Analysis = () => {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">Document Analysis</h1>
-                    <p className="text-slate-500">Detailed insights for your document.</p>
+                    <h1 className="text-3xl font-bold text-slate-900">{t('doc_analysis')}</h1>
+                    <p className="text-slate-500">{t('detailed_insights')}</p>
                 </div>
-                <div className="flex gap-2">
-                    <Button variant="outline">Export Report</Button>
+                <div className="flex gap-2 items-center">
+                    <LanguageSwitcher />
+                    <Button variant="outline">{t('export_report')}</Button>
                 </div>
             </div>
 

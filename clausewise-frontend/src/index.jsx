@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import "./index.css";
+import './i18n'; // Import i18n configuration
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
