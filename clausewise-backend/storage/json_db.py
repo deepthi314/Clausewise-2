@@ -6,11 +6,23 @@ DB_FILE = "db.json"
 
 def load_db():
     if not os.path.exists(DB_FILE):
-        return {"users": [], "documents": []}
+        # Create the file with default structure if it doesn't exist
+        default_db = {"users": [], "documents": []}
+        try:
+            with open(DB_FILE, "w") as f:
+                json.dump(default_db, f)
+        except Exception as e:
+            print(f"Error creating DB file: {e}")
+        return default_db
+        
     try:
         with open(DB_FILE, "r") as f:
             return json.load(f)
-    except:
+    except json.JSONDecodeError:
+        print("DB file is corrupted. Returning empty DB.")
+        return {"users": [], "documents": []}
+    except Exception as e:
+        print(f"Error loading DB: {e}")
         return {"users": [], "documents": []}
 
 def save_db(data):
