@@ -11,7 +11,14 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem("cw_token");
     const u = localStorage.getItem("cw_user");
     if (token && u) {
-      setUser(JSON.parse(u));
+      try {
+        setUser(JSON.parse(u));
+      } catch (e) {
+        console.error("Invalid user data in local storage, clearing session.");
+        localStorage.removeItem("cw_token");
+        localStorage.removeItem("cw_user");
+        setUser(null);
+      }
     }
     setLoading(false);
   }, []);
