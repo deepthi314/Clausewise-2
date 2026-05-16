@@ -1,17 +1,36 @@
+# Frontend
 clausewise-frontend/node_modules/
 clausewise-frontend/dist/
 clausewise-frontend/.env
-clausewise-frontend/.env.*
+clausewise-frontend/.env.local
+clausewise-frontend/.env.*.local
 
+# Backend
 clausewise-backend/.venv/
+clausewise-backend/venv/
 clausewise-backend/__pycache__/
+clausewise-backend/**/__pycache__/
+clausewise-backend/**/*.pyc
 clausewise-backend/uploads/
 clausewise-backend/.env
+clausewise-backend/.env.local
 clausewise-backend/db.json
 
+# OS / Editor
 .DS_Store
 Thumbs.db
 .vscode/
+.idea/
 *.log
 npm-debug.log*
 yarn-error.log*
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.egg-info/
+dist/
+build/
+.pytest_cache/

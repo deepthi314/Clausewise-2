@@ -42,20 +42,11 @@ def login(payload: UserLogin):
     user = find_user_by_email(payload.email)
     
     if not user:
-        # Create new user automatically
-        user = {
-            "_id": payload.email,
-            "name": payload.email.split("@")[0].capitalize(),
-            "email": payload.email,
-            "password": pwd.hash(payload.password),
-            "theme": "dark"
-        }
-        save_user(user)
-    else:
-        # Verify existing user credentials
-        if not pwd.verify(payload.password, user["password"]):
-            raise HTTPException(status_code=401, detail="Invalid credentials")
-            
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    if not pwd.verify(payload.password, user["password"]):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+        
     token = create_token(user["_id"], user["email"]) 
     return {"token": token, "user": {"id": user["_id"], "email": user["email"], "name": user["name"]}}
 

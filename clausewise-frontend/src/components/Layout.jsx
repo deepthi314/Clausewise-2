@@ -66,11 +66,11 @@ const Layout = ({ children }) => {
                 <div className="p-4 border-t border-slate-100">
                     <div className="flex items-center gap-3 px-3 py-2 mb-2">
                         <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold">
-                            {user?.username?.[0]?.toUpperCase() || 'U'}
+                            {user?.name?.[0]?.toUpperCase() || 'U'}
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-slate-900 truncate">
-                                {user?.username || 'User'}
+                                {user?.name || 'User'}
                             </p>
                         </div>
                     </div>

@@ -1,11 +1,9 @@
+ALLOWED_EXTENSIONS = {".pdf", ".docx", ".txt"}
+
+
 def is_legal_document(filename: str) -> bool:
-    f = filename.lower()
-    # Check extension
-    valid_ext = f.endswith(".pdf") or f.endswith(".docx") or f.endswith(".txt")
-    if not valid_ext:
+    """Accept any PDF, DOCX, or TXT file as a legal document."""
+    if not filename:
         return False
-    
-    # Check if it's an NDA (simple keyword check as requested)
-    # The user specifically asked to restrict to NDAs.
-    is_nda = "nda" in f or "non-disclosure" in f or "confidentiality" in f
-    return is_nda
+    ext = "." + filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    return ext in ALLOWED_EXTENSIONS

@@ -3,6 +3,11 @@ import sys
 from fastapi import FastAPI, Depends, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from dotenv import load_dotenv
+
+# Load .env before anything else
+load_dotenv()
+
 sys.path.append(os.path.dirname(__file__))
 from auth.auth_routes import router as auth_router, get_current_user
 from storage.user_documents import create_document_record, list_documents, get_document
@@ -48,20 +53,25 @@ def history(user=Depends(get_current_user)):
 @app.get("/analysis/{document_id}/overview")
 def overview(document_id: str, user=Depends(get_current_user)):
     doc = get_document(user["id"], document_id)
+    if not doc:
+        return JSONResponse(status_code=404, content={"detail": "Document not found"})
     data = extract_overview(doc["path"])
     return data
 
 @app.get("/analysis/{document_id}/extract")
 def extract(document_id: str, lang: str = "en", user=Depends(get_current_user)):
     doc = get_document(user["id"], document_id)
+    if not doc:
+        return JSONResponse(status_code=404, content={"detail": "Document not found"})
     clauses = extract_clauses(doc["path"])
-    # Apply simplification to generate all modes
     clauses = simplify_clauses(clauses, "Simplified", lang)
     return {"clauses": clauses}
 
 @app.post("/analysis/{document_id}/simplify")
 def simplify(document_id: str, body: dict, user=Depends(get_current_user)):
     doc = get_document(user["id"], document_id)
+    if not doc:
+        return JSONResponse(status_code=404, content={"detail": "Document not found"})
     clauses = extract_clauses(doc["path"])
     result = simplify_clauses(clauses, body.get("mode", "Simplified"))
     return {"clauses": result}
@@ -69,18 +79,24 @@ def simplify(document_id: str, body: dict, user=Depends(get_current_user)):
 @app.get("/analysis/{document_id}/risk")
 def risk(document_id: str, user=Depends(get_current_user)):
     doc = get_document(user["id"], document_id)
+    if not doc:
+        return JSONResponse(status_code=404, content={"detail": "Document not found"})
     res = analyze_risk(doc["path"]) 
     return res
 
 @app.get("/analysis/{document_id}/fairness")
 def fairness(document_id: str, user=Depends(get_current_user)):
     doc = get_document(user["id"], document_id)
+    if not doc:
+        return JSONResponse(status_code=404, content={"detail": "Document not found"})
     res = fairness_score(doc["path"]) 
     return res
 
 @app.post("/compare/{document_id}")
 def compare(document_id: str, file: UploadFile = File(...), user=Depends(get_current_user)):
     doc = get_document(user["id"], document_id)
+    if not doc:
+        return JSONResponse(status_code=404, content={"detail": "Document not found"})
     second = save_upload(file)
     res = compare_documents(doc["path"], second)
     return res

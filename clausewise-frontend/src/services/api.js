@@ -20,10 +20,13 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       localStorage.removeItem("cw_token");
+      localStorage.removeItem("cw_user");
       window.location.href = "/login";
     }
     return Promise.reject(error);
   }
 );
 
+// Named export for service files + default export for direct use
+export { api };
 export default api;

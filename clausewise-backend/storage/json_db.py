@@ -2,7 +2,8 @@ import json
 import os
 from datetime import datetime
 
-DB_FILE = "db.json"
+# Always resolve DB_FILE relative to this file's directory, regardless of CWD
+DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "db.json")
 
 def load_db():
     if not os.path.exists(DB_FILE):

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const SignupModal = ({ onSuccess }) => {
-  const { signup } = useAuth();
+  const { register: signup } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
